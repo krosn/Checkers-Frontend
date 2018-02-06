@@ -5,14 +5,6 @@ import './index.css';
 const PLAYER_W = 1;
 const PLAYER_B = 2;
 
-function Square(props) {
-  return (
-    <button className="square" onClick={props.onClick}>
-      {props.value}
-    </button>
-  );
-}
-
 function swapPlayer(player) {
 	if (player === PLAYER_W) {
 		return PLAYER_B;
@@ -21,14 +13,32 @@ function swapPlayer(player) {
 	}
 }
 
+function Square(props) {
+  return (
+    <button className="square" onClick={props.onClick}>
+      {props.value}
+    </button>
+  );
+}
+
 class Board extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      squares: Array(64).fill('_'),
+      squares: [],
       player: PLAYER_W
     };
+  }
 	
+  componentDidMount() {
+	const W_START_POS = [1, 3, 5, 7, 8, 10, 12, 14, 17, 19, 21, 23];
+	const B_START_POS = [40, 42, 44, 46, 49, 51, 53, 55, 56, 58, 60, 62];
+	  
+	let t_squares = Array(64).fill('_');
+	W_START_POS.forEach(index => t_squares[index] = 'W');
+	B_START_POS.forEach(index => t_squares[index] = 'B');
+	
+	this.setState({squares: t_squares});
   }
 	
   handleClick(i) {
@@ -38,6 +48,10 @@ class Board extends React.Component {
       squares: squares,
       player: swapPlayer(this.state.player)
     });
+  }
+  
+  initializeBoard() {
+	
   }
 	
   renderSquare(i) {
