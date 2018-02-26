@@ -1,14 +1,18 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import config from '../config.json';
 import '../index.css';
+
 
 function newGame(){
 	axios.request({
 		method:'post',
-		url:'http://localhost:1337/api/games',
-	}).then(response=> {
-		this.props.history.push('/');
-	}).catch(err => console.log(err));
+		url:'http://'+config.apiUrl+'/api/games',
+	}).then(function (response) {
+    	var key = response.data.key;
+    	//link to newly created game
+    	window.location.assign("http://"+config.clientUrl+"/game?key="+key);
+	})
 }
 
 class Home extends Component{
@@ -16,7 +20,9 @@ class Home extends Component{
 		return (
 		    <div>
 		      <h1> Checkers: The Game </h1>
-		      <p> To begin, press <button onClick={newGame}>New Game </button> <br />
+		      <p> To begin, press  
+		      		<button onClick={newGame}>New Game </button> 
+		      	<br />
 		        or enter a game code you got from a friend: 
 		      </p>
 		    </div>
