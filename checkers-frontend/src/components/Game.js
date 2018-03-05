@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { subscribeToTimer } from './Socket';
 
 const PLAYER_W = 1;
 const PLAYER_B = 2;
@@ -153,6 +154,14 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+  //connect to socket
+  constructor(props) {
+    super(props);
+    subscribeToTimer((err, timestamp) => this.setState({ 
+      timestamp 
+    }));
+  }
+
   render() {
     return (
       <div className="game">
