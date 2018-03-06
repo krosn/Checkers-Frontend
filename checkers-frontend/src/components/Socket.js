@@ -1,11 +1,15 @@
 import React from 'react';
 import openSocket from 'socket.io-client';
+var socket;
 
-
-function subscribeToTimer(cb) {
-	const socket = openSocket('http://localhost:8000');
-  socket.on('timer', timestamp => cb(null, timestamp));
+function subscribeToGame(cb) {
+  socket =  socket = openSocket('http://localhost:8000');
+  socket.on('timer', gameData => cb(null, gameData));
   socket.emit('subscribeToTimer', 1000);
 }
 
-export { subscribeToTimer };
+function sendMessage(eventName, message) {
+	socket.emit('move', message);
+}
+
+export { subscribeToGame, sendMessage };

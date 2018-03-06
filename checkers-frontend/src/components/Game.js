@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { subscribeToTimer } from './Socket';
+import { subscribeToGame, sendMessage } from './Socket';
 
 const PLAYER_W = 1;
 const PLAYER_B = 2;
@@ -41,6 +41,10 @@ class Board extends React.Component {
   }
 	
   handleClick(i) {
+    //emit an event
+    console.log("sent message");
+    sendMessage("move", "hello this is some bull shite");
+
     const squares = this.state.squares.slice();
     squares[i] = (this.state.player === PLAYER_W ? 'W' : 'B');
     this.setState({
@@ -157,14 +161,18 @@ class Game extends React.Component {
   //connect to socket
   constructor(props) {
     super(props);
-    subscribeToTimer((err, timestamp) => this.setState({ 
-      timestamp 
+    subscribeToGame((err, gameData) => this.setState({ 
+      gameData 
     }));
   }
+  state = {
+    gameData: 'no gameData yet'
+  };
 
   render() {
     return (
       <div className="game">
+        <p> {this.state.gameData} </p>
         <div className="game-board">
           <Board />
         </div>
