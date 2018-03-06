@@ -4,12 +4,11 @@ var socket;
 
 function subscribeToGame(cb) {
   socket =  socket = openSocket('http://localhost:8000');
-  socket.on('timer', gameData => cb(null, gameData));
-  socket.emit('subscribeToTimer', 1000);
+  socket.on('move', gameData => cb(null, gameData));
 }
 
-function sendMessage(eventName, message) {
-	socket.emit('move', message);
+function sendMove(message) {
+	socket.emit('sendToServer', message);
 }
 
-export { subscribeToGame, sendMessage };
+export { subscribeToGame, sendMove };
