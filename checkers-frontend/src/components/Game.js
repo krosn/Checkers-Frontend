@@ -3,6 +3,8 @@ import { subscribeToGame, sendMove } from './Socket';
 
 const PLAYER_W = 1;
 const PLAYER_B = 2;
+var   gameKey;
+var   clientPlayer;
 
 function swapPlayer(player) {
 	if (player === PLAYER_W) {
@@ -42,7 +44,7 @@ class Board extends React.Component {
 	
   handleClick(i) {
     //emit an event
-    sendMove("ooo here's some move data");
+    sendMove(gameKey, "ooo here's some move data");
 
     const squares = this.state.squares.slice();
     squares[i] = (this.state.player === PLAYER_W ? 'W' : 'B');
@@ -159,15 +161,26 @@ class Board extends React.Component {
 //called when opponent attempts to make a move
 function receiveMove(moveData) { 
   console.log(moveData);
+  //TODO: ...
+}
 
+function userJoined(joinData) {
+  console.log("user", joinData, "has joined!");
 }
 
 class Game extends React.Component {
   //connect to socket
   constructor(props) {
     super(props);
-    subscribeToGame((err, moveData) => {
+    //get querry params
+    var params = this.props.location.search;
+    gameKey = params.substring(5, params.indexOf('&'));
+    clientPlayer = params.substring(49);
+    //subscribe to socket
+    subscribeToGame(gameKey, clientPlayer, (err, moveData) => {
       receiveMove(moveData); 
+    }, (err, joinData) => {
+      userJoined(joinData); 
     });
   }
 

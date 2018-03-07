@@ -1,14 +1,15 @@
-import React from 'react';
 import openSocket from 'socket.io-client';
 var socket;
 
-function subscribeToGame(cb) {
-  socket =  socket = openSocket('http://localhost:8000');
-  socket.on('move', gameData => cb(null, gameData));
+function subscribeToGame(room, clientPlayer, cbMove, cbJoin) {
+  socket = openSocket('http://localhost:8000');
+  socket.emit('subscribe', room, clientPlayer);
+  socket.on(room, gameData => cbMove(null, gameData));
+  socket.on(room +'join', joinData => cbJoin(null, joinData));
 }
 
-function sendMove(message) {
-	socket.emit('sendToServer', message);
+function sendMove(room, message) {
+	socket.emit('sendToServer', room, message);
 }
 
 export { subscribeToGame, sendMove };
