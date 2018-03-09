@@ -29,9 +29,7 @@ Here some noteable functons:
 
 - `sendMove()` - This function emits a message to the Socket component, this contains a string with move data.
 
-## Socket Callback Functions
-
-- 
-
 
 ## TODOs 🛠
+
+- 
