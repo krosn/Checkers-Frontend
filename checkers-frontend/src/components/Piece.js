@@ -1,6 +1,12 @@
 import React, {Component} from 'react';
 import {PLAYER_W, PLAYER_B} from './Game'
 
+function pieceEquals(orig, other) {
+    return orig.id === other.id
+        && orig.player === other.player
+        && orig.king === other.king;
+}
+
 class Piece extends Component {
     constructor(props) {
         super(props);
@@ -31,4 +37,5 @@ class Piece extends Component {
     }
 }
 
+export {pieceEquals};
 export default Piece;

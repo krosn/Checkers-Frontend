@@ -1,4 +1,5 @@
 import {PLAYER_W, PLAYER_B} from './Game';
+import {pieceEquals} from './Piece';
 
 class Move {
     constructor(movingPiece, oldR, oldC, newR, newC) {
@@ -16,7 +17,7 @@ class Move {
 
         // Ya'll better not be lying about what piece is moving
         const pieceAtOld = squares[this.oldR][this.oldC].props;
-        if (this.movingPiece !== pieceAtOld) {
+        if (!pieceEquals(this.movingPiece, pieceAtOld)) {
             console.log('Moving piece did not start at origin in ' + moveText);
             return false;
         }

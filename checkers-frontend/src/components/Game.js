@@ -167,10 +167,10 @@ class Board extends Component {
         }
         // TODO: Check if this is an object or if we need to decode JSON
         var newMove = new Move(moveData.movingPiece,
-            moveData.oldC,
             moveData.oldR,
-            moveData.newC,
-            moveData.newR);
+            moveData.oldC,
+            moveData.newR,
+            moveData.newC);
         
         if(!this.movePiece(newMove)) {
              console.log('Rejected opponent move');
