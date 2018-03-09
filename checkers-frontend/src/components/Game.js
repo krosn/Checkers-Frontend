@@ -218,7 +218,7 @@ class Game extends Component {
             player: gamePlayer
         }
         //subscribe to socket
-        subscribeToGame(gameKey, clientPlayer, (err, moveData) => {
+        subscribeToGame(this.gameKey, clientPlayer, (err, moveData) => {
             this.receiveMove(moveData); 
         }, (err, joinData) => {
             this.userJoined(joinData); 
