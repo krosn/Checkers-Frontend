@@ -208,7 +208,7 @@ class Game extends Component {
         super(props);
         //get query params
         const params = this.props.location.search;
-        const gameKey = params.substring(5, params.indexOf('&'));
+        this.gameKey = params.substring(5, params.indexOf('&'));
         const clientPlayer = params.substring(49);
         const gamePlayer = Number.parseInt(clientPlayer, 10) === 1 
             ? PLAYER_W
@@ -242,6 +242,7 @@ class Game extends Component {
     render() {
         const playerInfo = 'You are player #' + playerToNum(this.state.player);
         const turnInfo = "It's player " + playerToNum(this.state.turn) + "'s turn";
+		const joinCode = "Your Join code is " + this.gameKey;
         
         return (
             <div className="game">
@@ -253,7 +254,8 @@ class Game extends Component {
                 <div className="game-board">
                     <Board player={this.state.player} turn={this.state.turn}/>
                 </div>
-                <button className="end-button" onClick={() => sendMove(gameKey, turnEnd)}>End Turn</button>
+                <button className="end-button" onClick={() => sendMove(this.gameKey, turnEnd)}>End Turn</button>
+				<div className="joinCode">{joinCode}</div>
             </div>
         );
     }
