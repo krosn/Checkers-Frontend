@@ -164,8 +164,10 @@ function receiveMove(moveData) {
   //TODO: ...
 }
 
+//called when a user has joined
 function userJoined(joinData) {
   console.log("user", joinData, "has joined!");
+  //TODO: handle when second user joined (AKA start game)
 }
 
 class Game extends React.Component {
