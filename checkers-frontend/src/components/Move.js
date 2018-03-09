@@ -1,5 +1,6 @@
+import React from 'react';
 import {PLAYER_W, PLAYER_B} from './Game';
-import {pieceEquals} from './Piece';
+import Piece, {pieceEquals} from './Piece';
 
 class Move {
     constructor(movingPiece, oldR, oldC, newR, newC) {
@@ -82,7 +83,9 @@ class Move {
             || (this.movingPiece.player === PLAYER_B && this.newR === 0))
             && !this.movingPiece.king) {
                 console.log('Kinging caused by ' + moveText);
-                squares[this.newR][this.newC].king = true;
+                const id = squares[this.newR][this.newC].props.id;
+                const player = squares[this.newR][this.newC].props.player;
+                squares[this.newR][this.newC] = <Piece id={id} player={player} king={true} />;
             }
 
         return squares;
