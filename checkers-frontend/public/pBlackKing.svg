@@ -1,0 +1,23 @@
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="44" height="44"><rect id="backgroundrect" width="100%" height="100%" x="0" y="0" fill="none" stroke="none"/>
+  <defs id="defs4">
+    
+    
+    
+    
+    
+  <filter id="f001" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" inkscape:label="Matte jelly" x="0" y="0" width="1" height="1" inkscape:menu="ABCs" inkscape:menu-tooltip="Bulging, matte jelly covering" color-interpolation-filters="sRGB">
+            <feColorMatrix values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.85 0" result="result0" in="SourceGraphic"/>
+            <feGaussianBlur in="SourceAlpha" stdDeviation="7"/>
+            <feSpecularLighting surfaceScale="5" specularConstant=".9" specularExponent="25">
+                <feDistantLight elevation="60" azimuth="225"/>
+            </feSpecularLighting>
+            <feComposite operator="atop" in2="result0"/>
+        </filter></defs>
+  
+<g class="currentLayer" style=""><title>Layer 1</title><g id="layer1" class="selected" filter="" fill="#444039" fill-opacity="1">
+    <g id="g3264" filter="" fill="#444039" fill-opacity="1">
+      <path d="M37.05989755405426,21.080597894363393 L37.05989755405426,28.832727894363416 C37.05989755405426,33.200437894363404 30.569067554054243,36.74523789436341 22.571437554054285,36.74523789436341 C14.573817554054244,36.74523789436341 8.082987554054284,33.200437894363404 8.082987554054284,28.832727894363416 L8.082987554054284,21.080597894363393 L37.05989755405426,21.080597894363393 z" id="path3254" style="fill-rule: evenodd; stroke: rgb(0, 0, 0); stroke-width: 0.989813; stroke-linecap: square; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dashoffset: 0; stroke-opacity: 1;" filter="" fill="#444039" fill-opacity="1"/>
+      <path d="M37.05989755405426,13.325327894363397 L37.05989755405426,21.07745789436342 C37.05989755405426,25.445167894363408 30.569067554054243,28.989967894363417 22.571437554054285,28.989967894363417 C14.573817554054244,28.989967894363417 8.082987554054284,25.445167894363408 8.082987554054284,21.07745789436342 L8.082987554054284,13.325327894363397 L37.05989755405426,13.325327894363397 z" id="path3225" style="fill-rule: evenodd; stroke: rgb(0, 0, 0); stroke-width: 0.989813; stroke-linecap: square; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dashoffset: 0; stroke-opacity: 1;" filter="" fill="#444039" fill-opacity="1"/>
+      <path d="M37.05989855405426,13.325324750692175 A14.488457,7.9125153654401394 0 1 1 8.082984954054268,13.325324750692175 A14.488457,7.9125153654401394 0 1 1 37.05989855405426,13.325324750692175 z" id="path2453" style="opacity: 1; fill-rule: evenodd; stroke: rgb(0, 0, 0); stroke-width: 0.989813; stroke-linecap: square; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1;" filter="" fill="#444039" fill-opacity="1"/>
+    </g>
+  </g></g></svg>
