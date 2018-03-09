@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import { subscribeToGame, sendMove } from './Socket';
+import { subscribeToGame, subscribeToBoard, sendMove, endTurn } from './Socket';
 import Move from './Move';
 import Piece from './Piece';
 
 export const PLAYER_W = 1;
 export const PLAYER_B = 2;
-const turnEnd = 'turnEnd';
 var   gameKey;
 var   clientPlayer;
+
 
 function playerToNum(player) {
     return player === PLAYER_W ? '1' : '2';
@@ -33,6 +33,9 @@ function Square(props) {
 class Board extends Component {
     constructor(props) {
         super(props);
+        this.gameKey = gameKey;
+        this.clientPlayer = clientPlayer;
+        //
         this.player = this.props.player
         this.state = {
             turn: this.props.turn,
@@ -46,9 +49,11 @@ class Board extends Component {
     componentDidMount() {
         this.initializeBoard();
         //subscribe to socket
-        subscribeToGame(gameKey, clientPlayer, (err, moveData) => {
+        subscribeToBoard(gameKey, clientPlayer, (err, moveData) => {
             this.receiveMove(moveData); 
-        }, null);
+        }, (err) => {
+            this.turnEnd();
+        });
     }
     
     handleClick(r, c) {
@@ -71,7 +76,7 @@ class Board extends Component {
             const oldY = this.state.selectedY;
             if (oldX !== null && oldY !== null) {
                 const movingPiece = squares[oldX][oldY];
-                const moved = this.movePiece(new Move(movingPiece, oldX, oldY, r, c));
+                const moved = this.movePiece(new Move(movingPiece.props, oldX, oldY, r, c));
 
                 if (moved !== false) {
                     // If we moved, deselect tiles
@@ -119,7 +124,7 @@ class Board extends Component {
         // turn that whoever it is is still only moving the same piece
         let moves = this.state.movesThisTurn.slice();
         const allSame = moves.every((mv, idx) => {
-            return move.movingPiece.props.id === mv.movingPiece.props.id;
+            return move.movingPiece.id === mv.movingPiece.id;
         });
         if (!allSame) {
             console.log('Cannot move a different piece in same turn.');
@@ -147,7 +152,8 @@ class Board extends Component {
         // If it's our turn let the opponent know about this move,
         // they should end up calling this same function.
         if (this.state.turn === this.player) {
-            sendMove(gameKey, move);
+            //console.log(this.gameKey);
+            sendMove(this.gameKey, this.clientPlayer, move);
         }
 
         return true;
@@ -159,18 +165,21 @@ class Board extends Component {
         if (moveData === null) {
             return;
         }
-
-        // Turn ended, clear our moves list
-        if (moveData === turnEnd) {
-            this.setState({movesThisTurn: []});
-        }
-
         // TODO: Check if this is an object or if we need to decode JSON
-        if (moveData instanceof Move) {
-            if(!this.movePiece(moveData)) {
-                console.log('Rejected opponent move');
-            }
+        var newMove = new Move(moveData.movingPiece,
+            moveData.oldC,
+            moveData.oldR,
+            moveData.newC,
+            moveData.newR);
+        
+        if(!this.movePiece(newMove)) {
+             console.log('Rejected opponent move');
         }
+    }
+
+    // Turn ended, clear our moves list
+    turnEnd() {
+        this.setState({movesThisTurn: []});
     }
 
     renderSquare(r, c, selected) {
@@ -209,7 +218,8 @@ class Game extends Component {
         //get query params
         const params = this.props.location.search;
         this.gameKey = params.substring(5, params.indexOf('&'));
-        const clientPlayer = params.substring(49);
+        gameKey = params.substring(5, params.indexOf('&'));
+        clientPlayer = params.substring(49);
         const gamePlayer = Number.parseInt(clientPlayer, 10) === 1 
             ? PLAYER_W
             : PLAYER_B; 
@@ -218,22 +228,19 @@ class Game extends Component {
             player: gamePlayer
         }
         //subscribe to socket
-        subscribeToGame(this.gameKey, clientPlayer, (err, moveData) => {
-            this.receiveMove(moveData); 
-        }, (err, joinData) => {
+        subscribeToGame(this.gameKey, clientPlayer, (err, joinData) => {
             this.userJoined(joinData); 
+        }, (err) => {
+            this.turnEnd();
         });
     }
 
     //called when opponent attempts to make a move
-    receiveMove(moveData) { 
-        if (moveData === turnEnd) {
-            const nextTurn = swapPlayer(this.state.turn);
-            this.setState({turn: nextTurn});
-        }
-        console.log(moveData);
+    turnEnd() { 
+        const nextTurn = swapPlayer(this.state.turn);
+        this.setState({turn: nextTurn});
         //TODO: ...
-    }
+    }  
 
     userJoined(joinData) {
         console.log("user", joinData, "has joined!");
@@ -254,7 +261,7 @@ class Game extends Component {
                 <div className="game-board">
                     <Board player={this.state.player} turn={this.state.turn}/>
                 </div>
-                <button className="end-button" onClick={() => sendMove(this.gameKey, turnEnd)}>End Turn</button>
+                <button className="end-button" onClick={() => endTurn(this.gameKey)}>End Turn</button>
 				<div className="joinCode">{joinCode}</div>
             </div>
         );

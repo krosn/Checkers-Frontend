@@ -15,7 +15,7 @@ class Move {
         const moveText = `move from (${this.oldR},${this.oldC}) to (${this.newR},${this.newC})`;
 
         // Ya'll better not be lying about what piece is moving
-        const pieceAtOld = squares[this.oldR][this.oldC];
+        const pieceAtOld = squares[this.oldR][this.oldC].props;
         if (this.movingPiece !== pieceAtOld) {
             console.log('Moving piece did not start at origin in ' + moveText);
             return false;
@@ -39,8 +39,8 @@ class Move {
         }
 
         // Can only move on your own turn
-        if (this.movingPiece.props.player !== turn) {
-            console.log('It is not player ' + this.movingPiece.props.player + '\'s turn to move.')
+        if (this.movingPiece.player !== turn) {
+            console.log('It is not player ' + this.movingPiece.player + '\'s turn to move.')
             return false;
         }
 
@@ -64,9 +64,9 @@ class Move {
         }
 
         // Only kings can go backwards
-        if (!this.movingPiece.props.king) {
-            if ((this.movingPiece.props.player === PLAYER_W && this.newR < this.oldR)
-                || (this.movingPiece.props.player === PLAYER_B && this.newR > this.oldR)) {
+        if (!this.movingPiece.king) {
+            if ((this.movingPiece.player === PLAYER_W && this.newR < this.oldR)
+                || (this.movingPiece.player === PLAYER_B && this.newR > this.oldR)) {
                 console.log('Cannot move backwards without king in ' + moveText);
                 return false;
             }
@@ -77,11 +77,11 @@ class Move {
         squares[this.oldR][this.oldC] = null;
 
         // King pieces
-        if (((this.movingPiece.props.player === PLAYER_W && this.newR === 7)
-            || (this.movingPiece.props.player === PLAYER_B && this.newR === 0))
-            && !this.movingPiece.props.king) {
+        if (((this.movingPiece.player === PLAYER_W && this.newR === 7)
+            || (this.movingPiece.player === PLAYER_B && this.newR === 0))
+            && !this.movingPiece.king) {
                 console.log('Kinging caused by ' + moveText);
-                squares[this.newR][this.newC].props.king = true;
+                squares[this.newR][this.newC].king = true;
             }
 
         return squares;
