@@ -57,7 +57,6 @@ class Board extends Component {
     
     handleClick(r, c) {
         // Don't recognize the click if it isn't our turn
-        console.log(this.state.turn);
         if(this.state.turn !== this.player) {
             return;
         }
