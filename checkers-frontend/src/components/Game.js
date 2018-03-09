@@ -105,7 +105,7 @@ class Game extends React.Component {
 	//connect to socket
 	constructor(props) {
 		super(props);
-		//get querry params
+		//get query params
 		var params = this.props.location.search;
 		gameKey = params.substring(5, params.indexOf('&'));
 		clientPlayer = params.substring(49);
