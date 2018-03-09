@@ -234,16 +234,23 @@ class Game extends Component {
         subscribeToGame(this.gameKey, clientPlayer, (err, joinData) => {
             this.userJoined(joinData); 
         }, (err) => {
-            this.turnEnd();
+            this.receiveTurnEnd();
         });
     }
 
     //called when opponent attempts to make a move
-    turnEnd() { 
+    receiveTurnEnd() { 
         const nextTurn = swapPlayer(this.state.turn);
         this.setState({turn: nextTurn});
         //TODO: ...
     }  
+
+    sendTurnEnd(gameKey) {
+        // Can only ned your own turn
+        if (this.state.turn === this.state.player) {
+            endTurn(this.gameKey);
+        }
+    }
 
     userJoined(joinData) {
         console.log("user", joinData, "has joined!");
@@ -253,7 +260,7 @@ class Game extends Component {
         const playerInfo = 'You are player #' + playerToNum(this.state.player);
         const turnInfo = "It's player " + playerToNum(this.state.turn) + "'s turn";
 		const joinCode = "Your Join code is " + this.gameKey;
-        
+
         return (
             <div className="game">
                 <div className="game-info">
@@ -264,7 +271,9 @@ class Game extends Component {
                 <div className="game-board">
                     <Board player={this.state.player} turn={this.state.turn}/>
                 </div>
-                <button className="end-button" onClick={() => endTurn(this.gameKey)}>End Turn</button>
+                <button className="end-button" 
+                    onClick={() => this.sendTurnEnd(this.gameKey)}
+                    disabled={this.state.turn !== this.state.player}>End Turn</button>
 				<div className="joinCode">{joinCode}</div>
             </div>
         );
