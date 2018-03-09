@@ -4,8 +4,21 @@ import Piece from './Piece';
 
 export const PLAYER_W = 1;
 export const PLAYER_B = 2;
+const turnEnd = 'turnEnd';
 var   gameKey;
 var   clientPlayer;
+
+function playerToNum(player) {
+    return player === PLAYER_W ? '1' : '2';
+}
+
+function squareIsEmpty(square) {
+    return square.props.value.player === null;
+}
+
+function squareIsPlayers(square, player) {
+    return square.props.value.player === null;
+}
 
 function swapPlayer(player) {
     if (player === PLAYER_W) {
@@ -15,6 +28,7 @@ function swapPlayer(player) {
     }
 }
 
+// TODO: Pull out into a separate class and take squareIs funcs with it
 function Square(props) {
     return (
         <button className={props.selected ? 'selected-square' : 'square'} onClick={props.onClick}>
@@ -27,8 +41,9 @@ class Board extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            player: this.props.player,
+            turn: this.props.turn,
             squares: [],
-            player: PLAYER_W,
             selectedX: null,
             selectedY: null,
             selectedPiece: null
@@ -74,6 +89,17 @@ class Board extends Component {
         this.setState({squares: t_squares});
     }
     
+    movePiece(oldR, oldC, newR, newC) {
+        if (newR - oldR > 1 || newC - oldC > 1) {
+            const msg = 'Illegal move from ' + {oldR} + ',' + {oldC} + 'to' + {newR} + ',' + {newC};
+            console.log(msg);
+        }
+
+        const squares = this.state.squares.slice();
+        squares[newR][newC] = squares[oldR][oldC];
+        this.setState({squares: squares});
+    }
+
     renderSquare(r, c, selected) {
         return (
             <Square
@@ -86,10 +112,7 @@ class Board extends Component {
     }
     
     render() {
-        const status = 'Next player: ' + (this.state.player === PLAYER_W ? '1' : '2');
-        
         let result = [];
-        result.push(<div className="status" key="status">{status}</div>);
         
         for (let r = 0; r < this.state.squares.length; r++) {
             const row = this.state.squares[r];
@@ -105,42 +128,59 @@ class Board extends Component {
     }
 }
 
-//called when opponent attempts to make a move
-function receiveMove(moveData) { 
-    console.log(moveData);
-    //TODO: ...
-}
-
-function userJoined(joinData) {
-    console.log("user", joinData, "has joined!");
-}
 
 class Game extends Component {
     //connect to socket
     constructor(props) {
         super(props);
         //get query params
-        var params = this.props.location.search;
-        gameKey = params.substring(5, params.indexOf('&'));
-        clientPlayer = params.substring(49);
+        const params = this.props.location.search;
+        const gameKey = params.substring(5, params.indexOf('&'));
+        const clientPlayer = params.substring(49);
+        const gamePlayer = Number.parseInt(clientPlayer, 10) === 1 
+            ? PLAYER_W
+            : PLAYER_B; 
+        this.state = {
+            turn: PLAYER_W,
+            player: gamePlayer
+        }
         //subscribe to socket
         subscribeToGame(gameKey, clientPlayer, (err, moveData) => {
-            receiveMove(moveData); 
+            this.receiveMove(moveData); 
         }, (err, joinData) => {
-            userJoined(joinData); 
+            this.userJoined(joinData); 
         });
+    }
+
+    //called when opponent attempts to make a move
+    receiveMove(moveData) { 
+        if (moveData === turnEnd) {
+            const nextTurn = swapPlayer(this.state.turn);
+            this.setState({turn: nextTurn});
+        }
+        console.log(moveData);
+        //TODO: ...
+    }
+
+    userJoined(joinData) {
+        console.log("user", joinData, "has joined!");
     }
     
     render() {
+        const playerInfo = 'You are player #' + playerToNum(this.state.player);
+        const turnInfo = "It's player " + playerToNum(this.state.turn) + "'s turn";
+        
         return (
             <div className="game">
-            <div className="game-board">
-            <Board />
-            </div>
-            <div className="game-info">
-            <div>{/* status */}</div>
-            <ol>{/* TODO */}</ol>
-            </div>
+                <div className="game-info">
+                    <div className="player">{playerInfo}</div>
+                    <div className="status">{turnInfo}</div>
+                    <ol>{/* TODO */}</ol>
+                </div>
+                <div className="game-board">
+                    <Board player={this.state.player} turn={this.state.turn}/>
+                </div>
+                <button className="end-button" onClick={() => sendMove(gameKey, turnEnd)}>End Turn</button>
             </div>
         );
     }
