@@ -26,7 +26,7 @@ class Piece extends Component {
         }
 
         return (<img src={svgToUse} height="30" 
-                    alt="a {this.player === PLAYER_W ? 'white' : 'black'} {this.king ? 'king' : 'piece'}"/>);
+                    alt={'a ' + (this.player === PLAYER_W ? 'white ' : 'black ') + (this.king ? 'king' : 'piece')}/>);
     }
 }
 

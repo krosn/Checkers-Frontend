@@ -17,7 +17,7 @@ function swapPlayer(player) {
 
 function Square(props) {
     return (
-        <button className="square" onClick={props.onClick}>
+        <button className={props.selected ? 'selected-square' : 'square'} onClick={props.onClick}>
         {props.value}
         </button>
     );
@@ -28,7 +28,10 @@ class Board extends Component {
         super(props);
         this.state = {
             squares: [],
-            player: PLAYER_W
+            player: PLAYER_W,
+            selectedX: null,
+            selectedY: null,
+            selectedPiece: null
         };
     }
     
@@ -41,10 +44,12 @@ class Board extends Component {
         sendMove(gameKey, "ooo here's some move data");
         
         const squares = this.state.squares.slice();
-        squares[r][c] = (this.state.player === PLAYER_W ? 'W' : 'B');
+        const selectedPiece = squares[r][c];
         this.setState({
             squares: squares,
-            //player: swapPlayer(this.state.player)
+            selectedX: r,
+            selectedY: c,
+            selectedPiece: selectedPiece
         });
     }
     
@@ -57,7 +62,7 @@ class Board extends Component {
                              [7,0], [7,2], [7,4], [7,6]];
         
         let t_squares = [...Array(8).keys()].map(i => 
-            Array(8).fill(<Piece player={null} king={null}/>)
+            Array(8).fill(null)
         );
         W_START_POS.forEach(indexes => t_squares[indexes[0]][indexes[1]] = 
             <Piece player={PLAYER_W} king={false}/>
@@ -69,10 +74,11 @@ class Board extends Component {
         this.setState({squares: t_squares});
     }
     
-    renderSquare(r, c) {
+    renderSquare(r, c, selected) {
         return (
             <Square
             key={r*8 + c}
+            selected={selected}
             value={this.state.squares[r][c]}
             onClick={() => this.handleClick(r, c)}
             />
@@ -89,7 +95,8 @@ class Board extends Component {
             const row = this.state.squares[r];
             let temp = [];
             for (let c = 0; c < row.length; c++) {
-                temp.push(this.renderSquare(r, c))
+                let selected = this.state.selectedX === r && this.state.selectedY === c;
+                temp.push(this.renderSquare(r, c, selected))
             }
             result.push(<div className="board-row" key={r}>{temp}</div>)
         }
