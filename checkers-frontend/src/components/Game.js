@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { subscribeToGame, sendMove } from './Socket';
+import Move from './Move';
 import Piece from './Piece';
 
 export const PLAYER_W = 1;
@@ -12,14 +13,6 @@ function playerToNum(player) {
     return player === PLAYER_W ? '1' : '2';
 }
 
-function squareIsEmpty(square) {
-    return square.props.value.player === null;
-}
-
-function squareIsPlayers(square, player) {
-    return square.props.value.player === null;
-}
-
 function swapPlayer(player) {
     if (player === PLAYER_W) {
         return PLAYER_B;
@@ -28,7 +21,7 @@ function swapPlayer(player) {
     }
 }
 
-// TODO: Pull out into a separate class and take squareIs funcs with it
+// TODO: Pull out into a separate class
 function Square(props) {
     return (
         <button className={props.selected ? 'selected-square' : 'square'} onClick={props.onClick}>
@@ -40,31 +33,61 @@ function Square(props) {
 class Board extends Component {
     constructor(props) {
         super(props);
+        this.player = this.props.player
         this.state = {
-            player: this.props.player,
             turn: this.props.turn,
+            movesThisTurn: [],
             squares: [],
             selectedX: null,
-            selectedY: null,
-            selectedPiece: null
+            selectedY: null
         };
     }
     
     componentDidMount() {
-        this.initializeBoard()
+        this.initializeBoard();
+        //subscribe to socket
+        subscribeToGame(gameKey, clientPlayer, (err, moveData) => {
+            this.receiveMove(moveData); 
+        }, null);
     }
     
     handleClick(r, c) {
-        //emit an event
-        sendMove(gameKey, "ooo here's some move data");
-        
+        // Don't recognize the click if it isn't our turn
+        if(this.state.turn !== this.player) {
+            return;
+        }
+
         const squares = this.state.squares.slice();
         const selectedPiece = squares[r][c];
+        // Don't recognize click of other player's piece
+        if(selectedPiece !== null && selectedPiece.props.player !== this.player) {
+            return;
+        }
+
+        // Clicked on an empty square, try to move if we currently had one
+        // of our pieces selected
+        if(selectedPiece === null) {
+            const oldX = this.state.selectedX;
+            const oldY = this.state.selectedY;
+            if (oldX !== null && oldY !== null) {
+                const movingPiece = squares[oldX][oldY];
+                const moved = this.movePiece(new Move(movingPiece, oldX, oldY, r, c));
+
+                if (moved !== false) {
+                    // If we moved, deselect tiles
+                    this.setState({
+                        selectedX: null,
+                        selectedY: null
+                    });
+                }
+            }
+            return
+        }
+
+        // It's our piece, so just highlight the new thing
         this.setState({
-            squares: squares,
             selectedX: r,
-            selectedY: c,
-            selectedPiece: selectedPiece
+            selectedY: c
         });
     }
     
@@ -79,25 +102,75 @@ class Board extends Component {
         let t_squares = [...Array(8).keys()].map(i => 
             Array(8).fill(null)
         );
-        W_START_POS.forEach(indexes => t_squares[indexes[0]][indexes[1]] = 
-            <Piece player={PLAYER_W} king={false}/>
+        W_START_POS.forEach((val, idx) => t_squares[val[0]][val[1]] = 
+            <Piece player={PLAYER_W} king={false} id={'w' + idx}/>
         );
-        B_START_POS.forEach(indexes => t_squares[indexes[0]][indexes[1]] = 
-            <Piece player={PLAYER_B} king={false} />
+        B_START_POS.forEach((val, idx) => t_squares[val[0]][val[1]] = 
+            <Piece player={PLAYER_B} king={false} id={'b' + idx}/>
         );
         
         this.setState({squares: t_squares});
     }
     
-    movePiece(oldR, oldC, newR, newC) {
-        if (newR - oldR > 1 || newC - oldC > 1) {
-            const msg = 'Illegal move from ' + {oldR} + ',' + {oldC} + 'to' + {newR} + ',' + {newC};
-            console.log(msg);
+    // Called when we want to make a move on our board.
+    // Returns true if the move went through, false otherwise
+    movePiece(move) {
+        // Need to check that if there were any other moves this
+        // turn that whoever it is is still only moving the same piece
+        let moves = this.state.movesThisTurn.slice();
+        const allSame = moves.every((mv, idx) => {
+            return move.movingPiece.props.id === mv.movingPiece.props.id;
+        });
+        if (!allSame) {
+            console.log('Cannot move a different piece in same turn.');
+            return false;
         }
 
-        const squares = this.state.squares.slice();
-        squares[newR][newC] = squares[oldR][oldC];
-        this.setState({squares: squares});
+        // Process move, just return if it was invalid, update squares
+        // otherwise
+        let squares = this.state.squares.slice();
+        const result = move.process(this.state.turn, this.state.squares);
+        if (result === false) {
+            return false;
+        } else {
+            squares = result;
+        }
+
+        // Update our list of moves and the board, then push it
+        // NOTE: We track the opponent's moves on their turn
+        moves.push(move);
+        this.setState({
+            movesThisTurn: moves,
+            squares: squares,
+        });
+
+        // If it's our turn let the opponent know about this move,
+        // they should end up calling this same function.
+        if (this.state.turn === this.player) {
+            sendMove(gameKey, move);
+        }
+
+        return true;
+    }
+
+    receiveMove(moveData) {
+        console.log(`player ${this.player} saw ${moveData}`);
+
+        if (moveData === null) {
+            return;
+        }
+
+        // Turn ended, clear our moves list
+        if (moveData === turnEnd) {
+            this.setState({movesThisTurn: []});
+        }
+
+        // TODO: Check if this is an object or if we need to decode JSON
+        if (moveData instanceof Move) {
+            if(!this.movePiece(moveData)) {
+                console.log('Rejected opponent move');
+            }
+        }
     }
 
     renderSquare(r, c, selected) {

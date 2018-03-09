@@ -4,6 +4,7 @@ import {PLAYER_W, PLAYER_B} from './Game'
 class Piece extends Component {
     constructor(props) {
         super(props);
+        this.id = this.props.id;
         this.player = this.props.player;
         this.king = this.props.king;
     }
