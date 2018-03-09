@@ -2,6 +2,11 @@ import React from 'react';
 import {PLAYER_W, PLAYER_B} from './Game';
 import Piece, {pieceEquals} from './Piece';
 
+function movedTwoSpaces(move) {
+    return Math.abs(move.newR - move.oldR) === 2 
+        && Math.abs(move.newC - move.oldC) === 2;
+}
+
 class Move {
     constructor(movingPiece, oldR, oldC, newR, newC) {
         this.movingPiece = movingPiece
@@ -92,4 +97,5 @@ class Move {
     }
 }
 
+export {movedTwoSpaces};
 export default Move;

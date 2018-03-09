@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { subscribeToGame, subscribeToBoard, sendMove, endTurn } from './Socket';
-import Move from './Move';
+import Move, {movedTwoSpaces} from './Move';
 import Piece from './Piece';
 
 export const PLAYER_W = 1;
@@ -127,6 +127,18 @@ class Board extends Component {
         });
         if (!allSame) {
             console.log('Cannot move a different piece in same turn.');
+            return false;
+        }
+
+        const allTwoSpaces = moves.every((mv, idx) => {
+            return movedTwoSpaces(mv);
+        });
+        console.log(moves.length);
+        console.log(allTwoSpaces);
+        console.log(movedTwoSpaces(move));
+        if (moves.length >= 1 
+            && (!allTwoSpaces || !movedTwoSpaces(move))) {
+            console.log('Multiple moves only allowed if all are jumps');
             return false;
         }
 
