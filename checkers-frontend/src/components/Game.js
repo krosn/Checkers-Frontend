@@ -35,10 +35,9 @@ class Board extends Component {
         super(props);
         this.gameKey = gameKey;
         this.clientPlayer = clientPlayer;
-        //
         this.player = this.props.player
         this.state = {
-            turn: this.props.turn,
+            turn: 1,
             movesThisTurn: [],
             squares: [],
             selectedX: null,
@@ -58,6 +57,7 @@ class Board extends Component {
     
     handleClick(r, c) {
         // Don't recognize the click if it isn't our turn
+        console.log(this.state.turn);
         if(this.state.turn !== this.player) {
             return;
         }
@@ -177,9 +177,12 @@ class Board extends Component {
         }
     }
 
-    // Turn ended, clear our moves list
     turnEnd() {
-        this.setState({movesThisTurn: []});
+        const nextPlayer = swapPlayer(this.state.turn);
+        this.setState({
+            movesThisTurn: [],
+            turn: nextPlayer
+        });
     }
 
     renderSquare(r, c, selected) {
