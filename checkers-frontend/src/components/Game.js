@@ -56,6 +56,8 @@ class Board extends Component {
     }
     
     handleClick(r, c) {
+        // TOOD: Just return if there are not two players
+
         // Don't recognize the click if it isn't our turn
         if(this.state.turn !== this.player) {
             return;
@@ -176,7 +178,6 @@ class Board extends Component {
         if (moveData === null) {
             return;
         }
-        // TODO: Check if this is an object or if we need to decode JSON
         var newMove = new Move(moveData.movingPiece,
             moveData.oldR,
             moveData.oldC,
@@ -219,6 +220,8 @@ class Board extends Component {
             }
             result.push(<div className="board-row" key={r}>{temp}</div>)
         }
+
+        // TODO: Check for winner and display if someone wins
         
         return(result);
     }
@@ -253,7 +256,6 @@ class Game extends Component {
     receiveTurnEnd() { 
         const nextTurn = swapPlayer(this.state.turn);
         this.setState({turn: nextTurn});
-        //TODO: ...
     }  
 
     sendTurnEnd(gameKey) {
@@ -277,7 +279,6 @@ class Game extends Component {
                 <div className="game-info">
                     <div className="player">{playerInfo}</div>
                     <div className="status">{turnInfo}</div>
-                    <ol>{/* TODO */}</ol>
                 </div>
                 <div className="game-board">
                     <Board player={this.state.player} turn={this.state.turn}/>
