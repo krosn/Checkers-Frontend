@@ -253,7 +253,7 @@ class Game extends Component {
         const playerInfo = 'You are player #' + playerToNum(this.state.player);
         const turnInfo = "It's player " + playerToNum(this.state.turn) + "'s turn";
 		const joinCode = "Your Join code is " + this.gameKey;
-        
+
         return (
             <div className="game">
                 <div className="game-info">
@@ -261,11 +261,17 @@ class Game extends Component {
                     <div className="status">{turnInfo}</div>
                     <ol>{/* TODO */}</ol>
                 </div>
-                <div className="game-board">
-                    <Board player={this.state.player} turn={this.state.turn}/>
+                <div className={'center game-board-'+this.state.player}>
+                    <div className="center-block">
+                        <Board player={this.state.player} turn={this.state.turn}/>
+                    </div>
+                </div> <br />
+                <div className="center">
+                    <button className="end-button center-block" onClick={() => endTurn(this.gameKey)}>End Turn</button> <br />
+                </div> <br />
+                <div className="game-info">
+				    <div className="joinCode">{joinCode}</div>
                 </div>
-                <button className="end-button" onClick={() => endTurn(this.gameKey)}>End Turn</button>
-				<div className="joinCode">{joinCode}</div>
             </div>
         );
     }

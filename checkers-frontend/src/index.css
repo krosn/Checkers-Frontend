@@ -1,3 +1,5 @@
+
+
 body {
   font: 14px "Century Gothic", Futura, sans-serif;
   margin: 20px;
@@ -5,6 +7,13 @@ body {
 
 ol, ul {
   padding-left: 30px;
+}
+
+.end-button {
+  background-color: #000;
+  color: #fff;
+  width: 265px;
+  text-align: center;
 }
 
 .board-row:after {
@@ -16,6 +25,24 @@ ol, ul {
 .status {
   margin-bottom: 10px;
 }
+
+.game-board-1 {
+  transform: rotate(180deg);
+}
+
+.center {
+  text-align: center;
+}
+
+.center-block {
+  display: inline-block;
+}
+
+[class~=game-board-1] .piece {
+  transform: rotate(180deg) translateY(8px);
+
+}
+
 
 .square {
   background: #fff;
@@ -59,3 +86,4 @@ ol, ul {
 .game-info {
   margin-left: 20px;
 }
+

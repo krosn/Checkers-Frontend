@@ -32,8 +32,10 @@ class Piece extends Component {
                 svgToUse = 'pBlack.svg';
         }
 
-        return (<img src={svgToUse} height="30" 
-                    alt={'a ' + (this.player === PLAYER_W ? 'white ' : 'black ') + (this.king ? 'king' : 'piece')}/>);
+        return (<div className={"piece"}>
+                    <img src={svgToUse} height="30" 
+                    alt={'a ' + (this.player === PLAYER_W ? 'white ' : 'black ') + (this.king ? 'king' : 'piece')}/>
+                </div>);
     }
 }
 
