@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { subscribeToGame, subscribeToBoard, sendMove, endTurn } from './Socket';
-import Move from './Move';
+import Move, {movedTwoSpaces} from './Move';
 import Piece from './Piece';
 
 export const PLAYER_W = 1;
@@ -56,8 +56,9 @@ class Board extends Component {
     }
     
     handleClick(r, c) {
+        // TOOD: Just return if there are not two players
+
         // Don't recognize the click if it isn't our turn
-        console.log(this.state.turn);
         if(this.state.turn !== this.player) {
             return;
         }
@@ -131,6 +132,18 @@ class Board extends Component {
             return false;
         }
 
+        const allTwoSpaces = moves.every((mv, idx) => {
+            return movedTwoSpaces(mv);
+        });
+        console.log(moves.length);
+        console.log(allTwoSpaces);
+        console.log(movedTwoSpaces(move));
+        if (moves.length >= 1 
+            && (!allTwoSpaces || !movedTwoSpaces(move))) {
+            console.log('Multiple moves only allowed if all are jumps');
+            return false;
+        }
+
         // Process move, just return if it was invalid, update squares
         // otherwise
         let squares = this.state.squares.slice();
@@ -165,7 +178,6 @@ class Board extends Component {
         if (moveData === null) {
             return;
         }
-        // TODO: Check if this is an object or if we need to decode JSON
         var newMove = new Move(moveData.movingPiece,
             moveData.oldR,
             moveData.oldC,
@@ -208,6 +220,8 @@ class Board extends Component {
             }
             result.push(<div className="board-row" key={r}>{temp}</div>)
         }
+
+        // TODO: Check for winner and display if someone wins
         
         return(result);
     }
@@ -234,16 +248,22 @@ class Game extends Component {
         subscribeToGame(this.gameKey, clientPlayer, (err, joinData) => {
             this.userJoined(joinData); 
         }, (err) => {
-            this.turnEnd();
+            this.receiveTurnEnd();
         });
     }
 
     //called when opponent attempts to make a move
-    turnEnd() { 
+    receiveTurnEnd() { 
         const nextTurn = swapPlayer(this.state.turn);
         this.setState({turn: nextTurn});
-        //TODO: ...
     }  
+
+    sendTurnEnd(gameKey) {
+        // Can only ned your own turn
+        if (this.state.turn === this.state.player) {
+            endTurn(this.gameKey);
+        }
+    }
 
     userJoined(joinData) {
         console.log("user", joinData, "has joined!");
@@ -259,7 +279,6 @@ class Game extends Component {
                 <div className="game-info">
                     <div className="player">{playerInfo}</div>
                     <div className="status">{turnInfo}</div>
-                    <ol>{/* TODO */}</ol>
                 </div>
                 <div className={'center game-board-'+this.state.player}>
                     <div className="center-block">
@@ -267,7 +286,9 @@ class Game extends Component {
                     </div>
                 </div> <br />
                 <div className="center">
-                    <button className="end-button center-block" onClick={() => endTurn(this.gameKey)}>End Turn</button> <br />
+                     <button className="end-button center-block" 
+                    onClick={() => this.sendTurnEnd(this.gameKey)}
+                    disabled={this.state.turn !== this.state.player}>End Turn</button> <br />
                 </div> <br />
                 <div className="game-info">
 				    <div className="joinCode">{joinCode}</div>
