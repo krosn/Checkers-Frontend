@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
-import { ToastContainer, toast, style } from 'react-toastify';
-import { css } from 'glamor';
+import { ToastContainer, toast, style, css } from './Toast'
 import { subscribeToGame, subscribeToBoard, sendMove, endTurn } from './Socket';
 import Move, {movedTwoSpaces} from './Move';
 import Piece from './Piece';
+import config from '../config.json';
+
 
 export const PLAYER_W = 1;
 export const PLAYER_B = 2;
+var   winner = null;
 var   gameKey;
 var   clientPlayer;
 
@@ -168,7 +170,43 @@ class Board extends Component {
             sendMove(this.gameKey, this.clientPlayer, move);
         }
 
+        //check to see if game has a winner
+        let wLeft = 0;
+        let bLeft = 0;
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                if(squares[i][j] !== null) {
+                    if(squares[i][j].props.player === 1) {
+                        wLeft++;
+                    } else {
+                        bLeft++;
+                    }
+                }
+            }
+        }
+        if(wLeft === 0) { //Black wins
+            console.log("Black wins");
+            winner = "2";
+            this.toastWin(winner, this.clientPlayer);
+        } else if(bLeft === 0) {
+            console.log("White wins");
+            winner = "1";
+            this.toastWin(winner, this.clientPlayer);
+        }
+
         return true;
+    }
+
+    toastWin(winner, clientPlayer) {
+        if(this.clientPlayer === winner) {
+             toast("You are the winner!!!",{
+                className: css({ fontFamily: "Century Gothic, Futura, sans-serif" })
+            });
+        } else  {
+             toast("You lost :(",{
+                className: css({ fontFamily: "Century Gothic, Futura, sans-serif" })
+            });
+        }
     }
 
     receiveMove(moveData) {
@@ -232,8 +270,6 @@ class Board extends Component {
             color = this.reverseColor(color);
         }
 
-        // TODO: Check for winner and display if someone wins
-        
         return(result);
     }
 }
@@ -290,13 +326,45 @@ class Game extends Component {
         const turnInfo = "It's player " + playerToNum(this.state.turn) + "'s turn";
 		const joinCode = "Your Join code is " + this.gameKey;
 
+        if(winner !== null) {
+            return this.endGame(winner);
+        } else {
+            return (
+                <div className="game">
+                    <div className="game-info">
+                        <div className="player">{playerInfo}</div>
+                        <div className="status">{turnInfo}</div>
+                    </div>
+                    <div className={'center game-board-'+this.state.player}>
+                        <div className="center-block center-border">
+                            <Board player={this.state.player} turn={this.state.turn}/>
+                        </div>
+                    </div> <br />
+                    <div className="center">
+                         <button className="button button-end center-block" 
+                        type="end"
+                        onClick={() => this.sendTurnEnd(this.gameKey)}
+                        disabled={this.state.turn !== this.state.player}>End Turn</button> <br />
+                    </div> <br />
+                    <div className="game-info">
+    				    <div className="joinCode">{joinCode}</div>
+                    </div>
+                    <ToastContainer />
+                </div>
+            );
+        }
+    }
+
+    endGame(winner) {
+        const playerInfo = 'You are player #' + playerToNum(this.state.player);
+        
         return (
             <div className="game">
                 <div className="game-info">
                     <div className="player">{playerInfo}</div>
-                    <div className="status">{turnInfo}</div>
+                    <div className="status">{"Player #"+winner+" is the winner!!!"}</div>
                 </div>
-                <div className={'center game-board-'+this.state.player}>
+                <div className={'center game-board-'+this.state.player+' end-game'}>
                     <div className="center-block center-border">
                         <Board player={this.state.player} turn={this.state.turn}/>
                     </div>
@@ -304,51 +372,18 @@ class Game extends Component {
                 <div className="center">
                      <button className="button button-end center-block" 
                     type="end"
-                    onClick={() => this.sendTurnEnd(this.gameKey)}
-                    disabled={this.state.turn !== this.state.player}>End Turn</button> <br />
+                    onClick={() => this.exitGame()}>Play Again!</button> <br />
                 </div> <br />
-                <div className="game-info">
-				    <div className="joinCode">{joinCode}</div>
-                </div>
-                <ToastContainer />
+                <ToastContainer className="toast" />
             </div>
         );
     }
+
+    exitGame() {
+        window.location.assign("http://"+config.clientUrl);
+    }
 }
 
-style({
-  width: "320px",
-  colorDefault: "#000",
-  colorInfo: "#3498db",
-  colorSuccess: "#07bc0c",
-  colorWarning: "#f1c40f",
-  colorError: "#e74c3c",
-  colorProgressDefault: "linear-gradient(to right, #9d98ff,  #d3d2f8)",
-  mobile: "only screen and (max-width : 480px)",
-  zIndex: 9999,
-  TOP_LEFT: {
-    left: '1em'
-  },
-  TOP_CENTER: {
-    marginLeft: `-${320/2}px`,
-    left: '50%'
-  },
-  TOP_RIGHT: {
-    right: '1em'
-  },
-  BOTTOM_LEFT: {
-    bottom: '2em',
-    left: '1em'
-  },
-  BOTTOM_CENTER: {
-    bottom: '2em',
-    marginLeft: `-${320/2}px`,
-    left: '50%'
-  },
-  BOTTOM_RIGHT: {
-    bottom: '2em',
-    right: '1em'
-  }
-});
+
 
 export default Game;

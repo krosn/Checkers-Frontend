@@ -141,3 +141,9 @@ button[type=end]:disabled {
   margin-left: 20px;
 }
 
+.end-game {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
