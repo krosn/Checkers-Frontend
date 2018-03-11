@@ -22,9 +22,10 @@ function swapPlayer(player) {
 }
 
 // TODO: Pull out into a separate class
-function Square(props) {
+function Square(props) { 
+    console.log(props);
     return (
-        <button className={props.selected ? 'selected-square' : 'square'} onClick={props.onClick}>
+        <button className={props.selected ? 'selected-square '+props.color : 'square '+props.color} onClick={props.onClick}>
         {props.value}
         </button>
     );
@@ -197,10 +198,11 @@ class Board extends Component {
         });
     }
 
-    renderSquare(r, c, selected) {
+    renderSquare(r, c, selected, color) {
         return (
             <Square
             key={r*8 + c}
+            color={color}
             selected={selected}
             value={this.state.squares[r][c]}
             onClick={() => this.handleClick(r, c)}
@@ -208,17 +210,28 @@ class Board extends Component {
         );
     }
     
+    reverseColor(color) {
+        if(color === "white") {
+            return "black";
+        } else {
+            return "white";
+        }
+    }
+    
     render() {
         let result = [];
+        let color = "white";
         
         for (let r = 0; r < this.state.squares.length; r++) {
             const row = this.state.squares[r];
             let temp = [];
             for (let c = 0; c < row.length; c++) {
                 let selected = this.state.selectedX === r && this.state.selectedY === c;
-                temp.push(this.renderSquare(r, c, selected))
+                temp.push(this.renderSquare(r, c, selected, color));
+                color = this.reverseColor(color);
             }
-            result.push(<div className="board-row" key={r}>{temp}</div>)
+            result.push(<div className="board-row" key={r}>{temp}</div>);
+            color = this.reverseColor(color);
         }
 
         // TODO: Check for winner and display if someone wins

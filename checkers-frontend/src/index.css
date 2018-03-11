@@ -22,6 +22,7 @@ button:focus {
   color: #fff;
   width: 265px;
   text-align: center;
+  padding: 7.75px;
 }
 
 .board-row:after {
@@ -44,6 +45,10 @@ button:focus {
 
 .center-block {
   display: inline-block;
+  border-top: 2px solid #222;
+  border-left: 1px solid #222;
+  border-bottom: 1px solid #222;
+  border-right: 2px solid #222;
 }
 
 [class~=game-board-1] .piece {
@@ -51,8 +56,7 @@ button:focus {
 }
 
 .square {
-  background: #fff;
-  border: 1px solid #999;
+  border: 1px solid #666;
   float: left;
   font-size: 24px;
   font-weight: bold;
@@ -65,6 +69,13 @@ button:focus {
   width: 34px;
 }
 
+.white {
+  background: #fff;
+}
+
+.black {
+  background: #ddd;
+}
 .selected-square {
   background: #99F;
   border: 1px solid #999;
