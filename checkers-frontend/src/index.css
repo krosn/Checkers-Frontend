@@ -36,7 +36,7 @@ button:focus {
 }
 
 .button:active {
-  color: #d3d2f8;
+  color: #9d98ff;
 }
 
 button[type=end]:disabled {

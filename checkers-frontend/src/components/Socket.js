@@ -14,8 +14,6 @@ function subscribeToBoard(room, clientPlayer, cb, endTurn) {
 }
 
 function sendMove(room, clientPlayer, message) {
-	console.log("sending as "+clientPlayer);
-
 	if(clientPlayer === "1") {
 	    socket.emit('sendToServer', room+"2", message);
 	} else {

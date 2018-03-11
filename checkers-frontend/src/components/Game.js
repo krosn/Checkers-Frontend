@@ -1,7 +1,44 @@
 import React, {Component} from 'react';
+import { ToastContainer, toast, style } from 'react-toastify';
+import { css } from 'glamor';
 import { subscribeToGame, subscribeToBoard, sendMove, endTurn } from './Socket';
 import Move, {movedTwoSpaces} from './Move';
 import Piece from './Piece';
+
+style({
+  width: "320px",
+  colorDefault: "#000",
+  colorInfo: "#3498db",
+  colorSuccess: "#07bc0c",
+  colorWarning: "#f1c40f",
+  colorError: "#e74c3c",
+  colorProgressDefault: "linear-gradient(to right, #9d98ff,  #d3d2f8)",
+  mobile: "only screen and (max-width : 480px)",
+  zIndex: 9999,
+  TOP_LEFT: {
+    left: '1em'
+  },
+  TOP_CENTER: {
+    marginLeft: `-${320/2}px`,
+    left: '50%'
+  },
+  TOP_RIGHT: {
+    right: '1em'
+  },
+  BOTTOM_LEFT: {
+    bottom: '2em',
+    left: '1em'
+  },
+  BOTTOM_CENTER: {
+    bottom: '2em',
+    marginLeft: `-${320/2}px`,
+    left: '50%'
+  },
+  BOTTOM_RIGHT: {
+    bottom: '2em',
+    right: '1em'
+  }
+});
 
 export const PLAYER_W = 1;
 export const PLAYER_B = 2;
@@ -274,8 +311,15 @@ class Game extends Component {
         }
     }
 
+    //notify = () => toast("Wow so easy !");
+
     userJoined(joinData) {
-        console.log("user", joinData, "has joined!");
+        console.log(" user", joinData, "has joined!");
+        if(clientPlayer === "1" && joinData === "2") {
+            toast("Your opponent has joined the game",{
+                className: css({ fontFamily: "Century Gothic, Futura, sans-serif" })
+            });
+        }
     }
     
     render() {
@@ -303,6 +347,7 @@ class Game extends Component {
                 <div className="game-info">
 				    <div className="joinCode">{joinCode}</div>
                 </div>
+                <ToastContainer />
             </div>
         );
     }
