@@ -23,7 +23,6 @@ function swapPlayer(player) {
 
 // TODO: Pull out into a separate class
 function Square(props) { 
-    console.log(props);
     return (
         <button className={props.selected ? 'selected-square '+props.color : 'square '+props.color} onClick={props.onClick}>
         {props.value}
@@ -136,9 +135,6 @@ class Board extends Component {
         const allTwoSpaces = moves.every((mv, idx) => {
             return movedTwoSpaces(mv);
         });
-        console.log(moves.length);
-        console.log(allTwoSpaces);
-        console.log(movedTwoSpaces(move));
         if (moves.length >= 1 
             && (!allTwoSpaces || !movedTwoSpaces(move))) {
             console.log('Multiple moves only allowed if all are jumps');

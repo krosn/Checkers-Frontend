@@ -31,7 +31,8 @@ class Move {
         // Move one or two spaces diagonally at a time
         const dx = Math.abs(this.newR - this.oldR);
         const dy = Math.abs(this.newC - this.oldC);
-        if (!(1 <= dx <= 2 && 1 <= dy <= 2) || dx !== dy) {
+        if ((1 > dx || dx > 2 || 1 > dy || dy > 2) 
+            || dx !== dy) {
             console.log('Illegal distance in ' + moveText);
             return false;
         }
