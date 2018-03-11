@@ -36,12 +36,10 @@ button:focus {
 }
 
 .button:active {
-  border: 1.5px solid #d3d2f8;
   color: #d3d2f8;
-
 }
 
-.disabled {
+button[type=end]:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }

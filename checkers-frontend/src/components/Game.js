@@ -300,6 +300,7 @@ class Game extends Component {
                 </div> <br />
                 <div className="center">
                      <button className="button button-end center-block" 
+                    type="end"
                     onClick={() => this.sendTurnEnd(this.gameKey)}
                     disabled={this.state.turn !== this.state.player}>End Turn</button> <br />
                 </div> <br />
