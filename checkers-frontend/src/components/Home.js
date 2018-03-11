@@ -51,16 +51,16 @@ class Home extends Component{
 		    <div>
 		      <h1> Checkers: The Game </h1>
 		      <p> To begin, press  
-		      		<button onClick={newGame}>New Game </button> 
+		      		<button className="button button-main" onClick={newGame}>New Game </button> 
 		      		<br />
 		        	or enter a game code you got from a friend: 
 		      </p>
 		      <form onSubmit={this.handleSubmit}>
         		<label>
           			Code:
-          			<input type="text" value={this.state.value} onChange={this.handleChange} />
+          			<input className="label" type="text" value={this.state.value} onChange={this.handleChange} />
         		</label>
-        		<input type="submit" value="Submit" />
+        		<input className="button button-main" type="submit" value="Submit" />
       		</form>
 
 		    </div>

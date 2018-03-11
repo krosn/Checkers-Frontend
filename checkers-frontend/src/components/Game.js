@@ -294,12 +294,12 @@ class Game extends Component {
                     <div className="status">{turnInfo}</div>
                 </div>
                 <div className={'center game-board-'+this.state.player}>
-                    <div className="center-block">
+                    <div className="center-block center-border">
                         <Board player={this.state.player} turn={this.state.turn}/>
                     </div>
                 </div> <br />
                 <div className="center">
-                     <button className="end-button center-block" 
+                     <button className="button button-end center-block" 
                     onClick={() => this.sendTurnEnd(this.gameKey)}
                     disabled={this.state.turn !== this.state.player}>End Turn</button> <br />
                 </div> <br />

@@ -17,12 +17,48 @@ button:focus {
 }
 
 
-.end-button {
-  background-color: #000;
-  color: #fff;
+
+
+.button {
+    background-color: #000;
+    color: #fff;
+    border: 1.5px solid #666;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    -webkit-transition-duration: 0.1s; /* Safari */
+    transition-duration: 0.1s;
+    cursor: pointer;
+}
+
+.button:hover {
+    color: #d3d2f8 ;
+}
+
+.button:active {
+  border: 1.5px solid #d3d2f8;
+  color: #d3d2f8;
+
+}
+
+.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.button-end {
   width: 265px;
   text-align: center;
   padding: 7.75px;
+}
+
+.button-main {
+  margin-left: 5px;
+  padding: 3px;
+}
+
+.lable {
+  margin-left: 50px;
 }
 
 .board-row:after {
@@ -45,6 +81,9 @@ button:focus {
 
 .center-block {
   display: inline-block;
+}
+
+.center-border {
   border-top: 2px solid #222;
   border-left: 1px solid #222;
   border-bottom: 1px solid #222;
