@@ -140,7 +140,7 @@ class Board extends Component {
             return movedTwoSpaces(mv);
         });
         if (moves.length >= 1 
-            && (!allTwoSpaces || !movedTwoSpaces(move))) {
+            && (!allTwoSpaces && !movedTwoSpaces(move))) {
             console.log('Multiple moves only allowed if all are jumps');
             return false;
         }
