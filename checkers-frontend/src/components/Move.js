@@ -58,6 +58,15 @@ class Move {
             return false;
         }
 
+		// Only kings can go backwards
+        if (!this.movingPiece.king) {
+            if ((this.movingPiece.player === PLAYER_W && this.newR < this.oldR)
+                || (this.movingPiece.player === PLAYER_B && this.newR > this.oldR)) {
+                console.log('Cannot move backwards without king in ' + moveText);
+                return false;
+            }
+        }
+		
         // If it was a two space move, it should have jumped an enemy
         if (dx === 2 && dy === 2) {
             const avgR = Math.floor((this.newR + this.oldR) / 2);
@@ -71,15 +80,7 @@ class Move {
             squares[avgR][avgC] = null;
         }
 
-        // Only kings can go backwards
-        if (!this.movingPiece.king) {
-            if ((this.movingPiece.player === PLAYER_W && this.newR < this.oldR)
-                || (this.movingPiece.player === PLAYER_B && this.newR > this.oldR)) {
-                console.log('Cannot move backwards without king in ' + moveText);
-                return false;
-            }
-        }
-
+        
         // Move the piece to its new position
         squares[this.newR][this.newC] = squares[this.oldR][this.oldC];
         squares[this.oldR][this.oldC] = null;
