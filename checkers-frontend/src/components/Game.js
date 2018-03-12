@@ -324,7 +324,7 @@ class Game extends Component {
     render() {
         const playerInfo = 'You are player #' + playerToNum(this.state.player);
         const turnInfo = "It's player " + playerToNum(this.state.turn) + "'s turn";
-		const joinCode = "Your Join code is " + this.gameKey;
+		const joinCode = "http://checkersthegame.net/game?key=" + this.gameKey + "&player=2";
 
         if(winner !== null) {
             return this.endGame(winner);
@@ -347,7 +347,10 @@ class Game extends Component {
                         disabled={this.state.turn !== this.state.player}>End Turn</button> <br />
                     </div> <br />
                     <div className="game-info">
-    				    <div className="joinCode">{joinCode}</div>
+						<div>Send This link to a friend to start playing now:</div>
+						<a href={joinCode} id="copyCode">{joinCode}</a><br/>					
+						<div> Alternatively have them paste this as a join code on the home page:</div>
+						<div>{gameKey}</div>
                     </div>
                     <ToastContainer />
                 </div>
